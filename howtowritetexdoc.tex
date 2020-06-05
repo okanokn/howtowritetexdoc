@@ -1,0 +1,385 @@
+\documentclass[a4paper,10pt,twocolumn,dvipdfmx]{jsarticle}
+\usepackage{geometry}
+\geometry{left=20mm,right=20mm,top=20mm,bottom=25mm}
+
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs=true} % 本文中で参照した数式のみ番号表示
+\usepackage{mathrsfs}
+\usepackage{graphicx}
+\usepackage{url}
+% \usepackage{siunitx}
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{problem}{Problem}
+
+% \DeclareMathOperator{\argmax}{arg\,max}
+% \DeclareMathOperator{\argmin}{arg\,min}
+% \DeclareMathOperator{\diag}{diag}
+% \DeclareMathOperator{\tr}{tr}
+% \DeclareMathOperator{\rank}{rank}
+
+\begin{document}
+\twocolumn[
+\centering
+{私家版 \LARGE\textbf{\LaTeX による工学文書の書き方}}
+\begin{flushright}
+ % 2020-02-20 岡野
+ 2020-06-06 岡野
+\end{flushright}
+]
+% タイトル等は，TeX標準の書き方では
+% \title{\LaTeX による工学文書の書き方}
+% \author{岡野}
+% \date{2020-02-20}
+% などと記述し，本文で\maketitleする．
+% ただ，結構なスペースをとるので，数ページの簡単な文書でスタイルファイルを
+% 使うまでもないときは，私は上のように書いてしまう．
+
+\section{はじめに}\label{sec:intro}
+学会予稿集や卒修論など，研究活動で文書を書くことは多い．
+このノートでは，\LaTeX の使い方を含めて文書作成における注意を記す．
+書く内容にまで踏み込むと切りがないので，記法上の約束に対象を絞る．
+文章の書き方一般については，例えばリンク集\cite{acwrting}が参考になる．
+文中で紹介する\LaTeX のコマンドについては各自web等で確認されたい．
+手っ取り早いものとして文献\cite{cheetsheet}を紹介しておく．
+なお，本ノートの内容はほぼ筆者の私見なので，適宜指導教員の指示を仰ぐこと．
+
+\section{文章の記法}\label{sec:comma}
+\subsection{約物}
+
+よく使う約物を区切りの強い順に並べると，
+\begin{align}
+ .\ >\ :\ >\ ;\ >\ ,\ \geq\ \cdot
+\end{align}
+である．
+全角記号と半角記号があるが，英文文書では半角のみ使用する\footnote{%
+タイプセットエラーを防ぐために英文では全角スペースも使用しない．}．
+和文では全角コンマ(，)とピリオド(．)を句読点に使う．ただし，数式や英単語中
+では半角とする\footnote{人によっては和文でも全て半角コンマ，ピリオドに統一する．
+筆者は，全角文字と見た目のバランスがよいので全角コンマ，ピリオド派である．}．
+テン(、)，マル(。)は理科系の文書では使用しないことがほとんどである．
+なお，横書き文書の句読点にはかなり論争がある\cite{tenmaru}．
+
+英文の場合は，ピリオド(.)，コロン(:)の次の文字を文頭と同じく大文字にする．
+セミコロン(;)の次は大文字にしない(固有名詞など元から大文字の場合を除く)．
+
+中黒(・)は，和文でたまに使う．コンマとの使い分けは，コンマは順序のあるものの
+列挙，中黒は順不同のものの列挙に使う(という説がある)．
+
+半角記号を使う場合は，約物の直後に必ず半角スペースを入れる．
+スペースを入れないと,こんな:感じ．
+\LaTeX は全角文字と半角文字の間に自動でスペースを入れて調節してくれる
+ので，コンマやピリオドはそれほど気にならないが，英文文書や
+約物の前後が半角の場合は寸の詰まった表示になってしまう．
+That is,like this.And this.
+
+文末以外で半角ピリオドを使う際には注意が必要である．
+(例えば，省略を表すピリオドFig.~1, Ex.~など．)
+ピリオドスペース(\verb*!. !)は文末と認識されるため，自動挿入のスペースが大きい．
+そのため，\verb*!Fig. 1!とすると不自然に間隔が空く．
+これを防ぐためには，\verb*!Fig.~1!や\verb*!Fig.\ 1!とする．
+どちらもFig.と1の間に明示的にスペースを挿入するが，前者はスペースの箇所での改行
+を禁止する．
+``Fig.''と次の文字の間に改行があると文末と誤解される恐れがあるため，
+この場合は\verb*!Fig.~1!と書く方が適当である．
+
+全角のコロン(：)とセミコロン(；)は和文であっても原則使用しない．
+
+
+\subsection{物理量と単位}
+``質量5 kg''のように物理量と単位を書くには，半角文字を使う．
+物理量と単位の間には必ずスペースを入れる．
+ただし角度や温度記号は例外(例: 90${}^\circ$)．
+
+単位はローマン体で書く．
+数式環境中(\verb!$$!, equation, alignなど)ではイタリックの数式フォント
+になってしまうので，\verb*!\textrm{}!コマンドで囲う．
+単位を括弧(\verb![]!など)で囲うかどうかは，雑誌に依る．
+投稿先の既存の文献を調べて先例に従う．
+
+\subsection{段落}
+内容(=伝えたいこと)の塊ごとに段落を分ける．
+ソースファイルで空行を1行以上挿入すると段落が分けられる．
+段落分けに強制改行コマンド(\verb!\\!)は使用しない．
+
+段落の冒頭に結論が書かれているとよい．
+各段落の第1文目だけを拾い読みすれば，なんとなく話の流れが
+掴めるのが理想．
+そのような文章を書くためには，伝えたい内容のストーリー
+(論理の流れ)が整理されている必要がある．
+
+\subsection{環境で括るべきもの}
+定義(definition)，命題(proposition)，定理(theorem)，補題(lemma)など．
+クラスファイルに定義されていなければ\texttt{amsthm}パッケージの機能を
+使うとよい．
+
+\section{数式の記法}\label{sec:eq}
+
+\subsection{数式は文の一部}
+数式は文の一部である．
+投稿先の編集規則に依るが，基本的には以下のようにコンマやピリオドを付ける．
+文の最後が数式で終わる場合は，数式の最後にピリオドを付す．
+本文中で全角ピリオドを使っている場合でも，数式環境中では半角ピリオドを使う．
+等号や不等号でつながっていれば1本の数式．
+複数本の数式を並べるときはコンマで区切る．
+たとえば，
+\begin{align}
+ 635318657 &= 1344 + 1334\\
+   &= 1584 + 594
+\end{align}
+は1本の数式を複数行に分けて書いている．
+一方，
+\begin{align}
+ x_{k+1} &= Ax_k + Bu_k,\\
+ y_k &= Cx_k
+\end{align}
+は2本の数式．
+
+\subsection{式番号}
+数式番号は本文中で参照するもののみに付ける．
+ただし，打ち合わせ資料のように全ての数式に番号があったほうが
+議論しやすい場合もある．
+式番号の引用には\verb!\eqref!コマンドか\verb!\ref!コマンドを使う．
+\verb!\eqref!は\texttt{amsmath}パッケージのコマンドで，番号に()が
+自動的につく．
+どんなにlabelを付けるのが面倒でも，必ず\verb!\eqref! (\verb!\ref!)
+を使うこと！
+
+\texttt{mathtools}パッケージを使えば本文で参照している式のみ番号が
+表示される．
+使い方は本ノートのソースファイルを参照．
+
+\subsection{論理記号}
+任意の〜，集合〜に含まれる，などの数学表現を記すために記号を使うとよい．
+使い方については文献\cite{logic}によくまとめられている．
+
+\subsection{その他}
+\paragraph{転置} \verb!\top!を使うこと．例: $L_1\Sigma^{-1}U^\top d = 0$.
+
+\paragraph{行列} \texttt{bmatrix}環境を使うとよい:
+\begin{align}
+ \begin{bmatrix}
+  m_{11} & m_{12} & m_{13} \\
+  m_{21} & m_{22} & m_{23}
+ \end{bmatrix}.
+\end{align}
+
+\paragraph{括弧} $\left[\left\{\left(\right)\right\}\right]$の順で外側に．
+分数など高さのある式をくくる場合は\verb!\left(\right)!をつけて大きさを調整する．
+
+\paragraph{整列} 複数行に渡る数式は$=$の位置で揃える．
+
+\paragraph{記号・フォントの選択}  $i,j,k$は整数を表すなど，慣習的に使う記号がなんとなくある．
+文献を読んで覚えていけばよい．
+フォントの使い分けについては表~\ref{tab:fonts}に私見をまとめた．
+
+\begin{table}[b]
+ \small
+ \centering
+ \caption{数式アクセントとフォント}
+ \begin{tabular}{ccl}
+  記号 & コマンド & 使用例\\\hline
+  $\hat{a},\ \widehat{a}$ & \verb!\hat!,  \verb!\widehat! & {\footnotesize $x$の推定値$\hat x$}\\
+  $\tilde{a},\ \widetilde{a}$ & \verb!\tilde!,  \verb!\widetilde! & {\footnotesize $\tilde x:= x - \pi/2$とか}\\
+  $\mathbb{ABC}$ & \verb!\mathbb{}! & {\footnotesize  複素数全体$\mathbb{C}$，実数全体$\mathbb{R}$}\\
+  $\mathcal{ABC}$ & \verb!\mathcal{}! & {\footnotesize  部分集合$\mathcal{S}\subset \mathbb{R}$，集合族}\\
+  $\mathscr{ABC}$ & \verb!\mathscr{}! & {\footnotesize  \verb!mathcal!と種類の違う集合}
+ \end{tabular}
+ \label{tab:fonts}
+\end{table}
+
+
+\section{図表の記法}
+\subsection{表示する場所，参照}
+ページ上部か下部に寄せる．
+本文中で，必ず図表番号を参照する．
+本文で図表番号が初登場するページか，それ以降のページに図表が載るようにする．
+参照には必ず\verb!\ref!コマンドを使う．
+
+
+\subsection{キャプション}
+図中のフォントの大きさは本文のキャプションと同じくらいになるように．
+使用するクラスファイルによって，``図 1 ...''や``Fig.~1 ...''のように
+接頭語が異なる．
+接頭語が日本語ならばキャプションも日本語，英語ならば英語で書く．
+
+\subsection{図ファイルの作り方}% TODO: もっと詳しく書く
+グラフはMatlabでプロットし，eps形式で書き出し(またはFigureのコピー)．
+必要ならPowerPoint上で編集しpdf出力．
+\texttt{pdfcrop}で余白切り落とし．
+
+Matlabのデフォルトフォント，線種は見にくいので注意．
+
+% \begin{table}[tbp]
+%  \caption{表の例}
+%  \label{tb:performance_index}
+%  \centering
+%  \begin{tabular}{c|ccc}
+%   \hline
+%   & $T_f$ & $\alpha$ & $J$ \\\hline
+%   Case 1 & --- & --- & 0.8241\\
+%   Case 2 & 5 & $-$0.5 &0.9472\\
+%   Case 3 & 0.5 & $-$10 & 0.9825\\
+%   Case 4 & 0.5 & $-$0.5 &  1.0246\\\hline
+%  \end{tabular}
+% \end{table}
+
+\section{参考文献の記法}\label{sec:ref}
+\subsection{文献の種類}
+\paragraph{書籍}
+出版社から発行される本．内容の新しさや信頼性は本によって色々．
+
+\paragraph{雑誌論文(journal paper)}
+学術雑誌に掲載される記事．
+同分野の研究者による査読(内容チェック)を通過した原稿なので，
+この中では最も信頼性の高い情報．
+
+\paragraph{会議録(conference proceeding)}
+各所で開催される学会の予稿集．学会によっては査読があり，通過した
+もののみ発表が許可される．雑誌論文より速報性があり，最新の研究に
+アクセスしやすい．
+% レベルの高い学会ならば査読もあるので信頼がおける．
+
+\paragraph{解説記事(magazine paper, tutorial paper)}
+研究者の組織する団体(学会)が月1回程度発行する会誌などに掲載される
+記事．流行の分野について，専門家が基礎的な内容から解説する．
+新たに分野を学ぶときに便利．
+
+\paragraph{プレプリント}
+査読なし，速報性優先で公開される原稿．arXiv\footnote{\url{https://arxiv.org/}}が有名．
+他にも分野に特化したプレプリントサーバがある．
+
+\subsection{文献リストの表記}
+参考文献の引用方法と文献リストの表記法について述べる．
+論文誌によって表記は異なるが，必ずひとつの文書内で表記法を
+統一する．
+投稿先の出版済み文書を数本入手し，しっかり書けていそうなものを
+真似するとよい．
+
+\subsubsection{英文雑誌論文，会議録}\label{sec:ref-enj}
+IEEE系の表記例を使って各項目の注意を述べる．
+\begin{quote}
+ G.~N.~Nair, R.~J.~Evans, I.~M.~Y.~Mareels, and W.~Moran,
+ ``Topological feedback entropy and nonlinear stabilization,''
+ \emph{IEEE Transactions on Automatic Control},
+ vol.~49, no.~9, pp.~1585--1597, Sept., 2004.
+\end{quote}
+
+\paragraph{著者}
+著者の姓(family name)以外は頭文字 + 半角ピリオド(.)と省略する．
+ピリオドの後には半角スペースを挿入するが，文末の区切りと
+区別するためと，ピリオド直後の改行を防ぐために，$\tilde{}$で
+次の文字とつなぐ．
+つまり，\verb|G.~N.~Nair, R.~J.~Evans|のように書く．
+
+著者が2人の場合は，
+\begin{quote}
+ G.~N.~Nair and R.~J.~Evans,
+\end{quote}
+とandでつなぐ．3人以上の場合は，冒頭の例のように，``,''でつなぎ，
+最後の1人の前に``, and''を挿入する．
+
+省略表記として，著者\underline{3人}以上の場合は
+\begin{quote}
+ G.~N.~Nair \emph{et al.}, ``Title...
+\end{quote}
+と，2人目以降を省略することもある\footnote{\emph{et al.}については\ref{sec:abrv}
+を参照．}．
+\emph{et al.}はイタリック
+で書き，最後のピリオドとコンマの間にはスペースを入れない．
+
+\paragraph{タイトル}
+ダブルクォーテーション``''で囲う．``はバッククォーテーション(\verb|``|)を2つ，
+''はシングルクォーテーションを2つ(\verb|''|)で表示できる．
+閉じダブルクォーテーションの前に，コンマが来ることに注意．
+
+文献によっては，
+\begin{quote}
+ Topological Feedback Entropy
+\end{quote}
+のように，
+単語頭を大文字にする(cap \& low)場合がある．その場合でも文頭以外の冠詞や
+接続詞(and, on, theなど)は大文字にしない．Withは大文字にする．
+cap \& lowで書く/書かないは，文書内すべての文献表記で統一する\footnote{文頭以外
+小文字に統一したほうが楽だと思う．}．
+
+\paragraph{雑誌名}
+イタリックで書く．\verb!\emph{}!や\verb!\textit{}!でイタリックになる．
+国際会議録の場合は，
+\begin{quote}
+ in \emph{Proceedings of IEEE Conference on Decision and Control}
+\end{quote}
+または
+\begin{quote}
+ \emph{Proc.\ IEEE Conference on Decision and Control}
+\end{quote}
+とする．Proceedingsは会議録の意．
+
+雑誌名，会議名は単語を省略することも多い(Conference $\to$ Conf.など)．
+雑誌ごとに略記表記が大体決まっているので，既存の文献をあたって調べる．
+文書内で省略する/しない，同じ単語の略表記を統一すること．
+
+\paragraph{巻，号}
+巻番号(volume, vol.)と号番号(number, no.)を記す．文献によっては，
+numberではなくissueと記載されている．その場合でも，no.と表記する．
+
+\paragraph{出版年月}
+出版年を西暦で書く．出版月は記載しないこともある．
+
+\subsubsection{英文書籍}\label{sec:ref-enb}
+同じくIEEE系の表記例を示す．
+\begin{quote}
+ T.~M.~Cover and J.~A.~Thomas, 
+ \emph{Elements of Information Theory}, 2nd ed., Wiley, 2006.
+\end{quote}
+
+著者は雑誌論文の場合と同じ．
+\paragraph{書籍名}
+イタリックで書き，ダブルクウォートで囲わない．
+雑誌論文のタイトルをcap \& lowしない場合でも，書籍はcap \& lowに
+する\footnote{正直謎ルール．}．
+
+\paragraph{版，出版社，出版年}
+例では第2版なので``2nd ed.''と記載している．
+初版ならば不要．
+出版社，出版年は例のとおり記載する．
+
+\begin{thebibliography}{9}
+\bibitem{acwrting}
+        レファレンス共同データベース, 
+        ``レポート・論文を書くためのアカデミック・ライティングについて知りたい。,''
+        \url{https://crd.ndl.go.jp/reference/modules/d3ndlcrdentry/index.php?page=ref_view&id=1000203151}.
+\bibitem{cheetsheet}
+        T.~Asakura, ``p\LaTeX 2${}_\varepsilon$チートシート,''
+        \url{https://wtsnjp.com/pdf/platexsheet.pdf}.
+\bibitem{tenmaru} 渡部善隆, ``横書き句読点の謎,''
+        \url{http://ri2t.kyushu-u.ac.jp/~watanabe/RESERCH/MANUSCRIPT/OTHERS/YOKO/ten.pdf}.
+\bibitem{logic}
+        清野和彦, ``2008年度数学I演習補足解説: 論理記号について,''
+        \url{https://lecture.ecc.u-tokyo.ac.jp/~nkiyono/2008/mori08-01a.pdf}.
+\end{thebibliography}
+
+\clearpage
+\appendix
+\section{よく使う略語}\label{sec:abrv}
+使用頻度の高い略語を表\ref{tab:abbrv}に示す．
+\begin{table}[htb]
+ \small
+ \centering
+ \caption{よく使う略語}
+ \begin{tabular}{ccl}
+  省略形 & 非省略形 & 意味\\\hline
+  e.g. & exempli gratia & たとえば\\
+  i.e. & id est & すなわち\\
+  et al. & et alii/aliae/alia & その他\\
+  w.l.o.g. & {\footnotesize without loss of generality} & {\footnotesize 一般性を失うことなく}\\
+  w.r.t. & with respect to & に関して
+ \end{tabular}
+ \label{tab:abbrv}
+\end{table}
+
+\end{document}
